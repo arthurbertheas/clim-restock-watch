@@ -12,8 +12,13 @@ function collectAvailability(node: unknown, out: string[]): void {
     for (const item of node) collectAvailability(item, out);
   } else if (node && typeof node === "object") {
     for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
-      if (key.toLowerCase() === "availability" && typeof value === "string") {
-        out.push(value);
+      if (key.toLowerCase() === "availability") {
+        if (typeof value === "string") {
+          out.push(value);
+        } else if (value && typeof value === "object") {
+          const id = (value as Record<string, unknown>)["@id"];
+          if (typeof id === "string") out.push(id);
+        }
       } else {
         collectAvailability(value, out);
       }
@@ -46,8 +51,11 @@ export function detectStock(html: string, match?: string | null): StockStatus {
   const jsonLd = parseJsonLdAvailability(html);
   if (jsonLd) return jsonLd;
 
-  if (match && match.trim()) {
-    return html.toLowerCase().includes(match.toLowerCase()) ? "en_stock" : "rupture";
+  if (match) {
+    const trimmed = match.trim();
+    if (trimmed) {
+      return html.toLowerCase().includes(trimmed.toLowerCase()) ? "en_stock" : "rupture";
+    }
   }
 
   const text = html.toLowerCase();

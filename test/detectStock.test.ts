@@ -31,6 +31,12 @@ describe("parseJsonLdAvailability", () => {
     const html = `<script type="application/ld+json">{ broken json </script>`;
     expect(parseJsonLdAvailability(html)).toBeNull();
   });
+  it("maps availability given as an @id object to en_stock", () => {
+    const html = `<script type="application/ld+json">
+    {"@type":"Product","offers":{"@type":"Offer","availability":{"@id":"https://schema.org/InStock"}}}
+    </script>`;
+    expect(parseJsonLdAvailability(html)).toBe("en_stock");
+  });
 });
 
 describe("detectStock fallback cascade", () => {
@@ -57,5 +63,9 @@ describe("detectStock fallback cascade", () => {
   it("JSON-LD wins over conflicting body text", () => {
     const html = jsonLdPage("https://schema.org/InStock") + "<div>indisponible</div>";
     expect(detectStock(html)).toBe("en_stock");
+  });
+  it("ignores an empty match and falls through to the heuristic", () => {
+    const html = "<html><body>Bienvenue sur la boutique</body></html>";
+    expect(detectStock(html, "   ")).toBe("inconnu");
   });
 });
