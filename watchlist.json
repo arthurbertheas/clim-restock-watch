@@ -6,5 +6,13 @@
     "intervalMin": 15,
     "firecrawlIntervalMin": 60,
     "match": null
+  },
+  {
+    "nom": "delonghi",
+    "url": "https://www.leroymerlin.fr/produits/climatiseur-mobile-reversible-de-longhi-pac-el92-hp-2500-2000w-9000-86328139.html",
+    "method": "auto",
+    "intervalMin": 15,
+    "firecrawlIntervalMin": 60,
+    "match": null
   }
 ]
