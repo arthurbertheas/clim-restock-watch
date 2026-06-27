@@ -27,6 +27,7 @@ export async function httpFetch(url: string): Promise<FetchResult> {
       },
       redirect: "follow",
     });
+    if (!res.ok) return { html: "", blocked: true };
     const html = await res.text();
     return { html, blocked: classifyResponse(res.status, html) };
   } catch {

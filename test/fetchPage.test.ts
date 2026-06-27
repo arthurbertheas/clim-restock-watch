@@ -8,6 +8,9 @@ describe("classifyResponse", () => {
     expect(classifyResponse(403, big)).toBe(true);
     expect(classifyResponse(429, big)).toBe(true);
   });
+  it("blocked at the 400 boundary", () => {
+    expect(classifyResponse(400, big)).toBe(true);
+  });
   it("blocked on tiny body", () => {
     expect(classifyResponse(200, "<html></html>")).toBe(true);
   });
