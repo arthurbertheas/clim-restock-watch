@@ -32,5 +32,7 @@ jobs:
           git config user.name "clim-bot"
           git config user.email "actions@github.com"
           git add state.json
-          git diff --quiet --cached || git commit -m "chore: update state [skip ci]"
-          git push
+          if ! git diff --quiet --cached; then
+            git commit -m "chore: update state [skip ci]"
+            git push
+          fi

@@ -9,7 +9,14 @@ const WATCHLIST_PATH = "watchlist.json";
 const STATE_PATH = "state.json";
 
 async function main(): Promise<void> {
-  const watchlist = JSON.parse(readFileSync(WATCHLIST_PATH, "utf8")) as WatchEntry[];
+  let watchlist: WatchEntry[];
+  try {
+    watchlist = JSON.parse(readFileSync(WATCHLIST_PATH, "utf8")) as WatchEntry[];
+  } catch {
+    console.error(`ERREUR: ${WATCHLIST_PATH} introuvable ou invalide — cree-le a partir de l'exemple du README.`);
+    process.exitCode = 1;
+    return;
+  }
   const state = loadState(STATE_PATH);
   const apiKey = process.env.FIRECRAWL_API_KEY ?? null;
 

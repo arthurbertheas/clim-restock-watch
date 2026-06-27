@@ -25,12 +25,13 @@ Edite `watchlist.json` :
 {
   "nom": "Nom lisible",
   "url": "https://...",
-  "method": "auto",            // auto | fetch | firecrawl
-  "intervalMin": 15,           // cadence de check (fetch gratuit)
-  "firecrawlIntervalMin": 60,  // cadence max des appels Firecrawl
-  "match": null                // optionnel : texte present si en stock
+  "method": "auto",
+  "intervalMin": 15,
+  "firecrawlIntervalMin": 60,
+  "match": null
 }
 ```
+Champs : `method` = `auto` | `fetch` | `firecrawl` ; `intervalMin` = cadence de check du fetch gratuit (minutes) ; `firecrawlIntervalMin` = cadence max des appels Firecrawl pour cette URL (minutes) ; `match` = texte présent uniquement si le produit est en stock (optionnel, sinon `null`).
 
 ## Budget Firecrawl
 Quota free = 1000 scrapes/mois. Le tool ne depasse jamais 950 (plafond de securite) et
