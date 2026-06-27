@@ -96,4 +96,12 @@ describe("runCheck", () => {
     await runCheck(wl, state, deps({ http, firecrawl, firecrawlApiKey: null }));
     expect(firecrawl).not.toHaveBeenCalled();
   });
+
+  it("logs a projection warning when worst-case Firecrawl usage exceeds 1000/month", async () => {
+    const wl: WatchEntry[] = [{ nom: "Clim", url: "u1", method: "auto", firecrawlIntervalMin: 30 }];
+    const state = blankState();
+    const log = vi.fn();
+    await runCheck(wl, state, deps({ log }));
+    expect(log).toHaveBeenCalledWith(expect.stringContaining("projection"));
+  });
 });
