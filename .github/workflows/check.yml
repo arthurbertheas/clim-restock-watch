@@ -36,3 +36,5 @@ jobs:
             git commit -m "chore: update state [skip ci]"
             git push
           fi
+
+# (re-index touch)
