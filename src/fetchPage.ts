@@ -42,10 +42,17 @@ export async function firecrawlFetch(url: string, apiKey: string): Promise<Fetch
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({ url, formats: ["rawHtml"] }),
     });
-    if (!res.ok) return { html: "", blocked: true };
+    if (!res.ok) {
+      console.error(`[FCDBG] http not ok status=${res.status} body=${JSON.stringify((await res.text()).slice(0, 200))}`);
+      return { html: "", blocked: true };
+    }
     const json = (await res.json()) as { success?: boolean; data?: { rawHtml?: string } };
     const html = json.data?.rawHtml ?? "";
-    return { html, blocked: classifyResponse(200, html) };
+    const blocked = classifyResponse(200, html);
+    console.error(
+      `[FCDBG] success=${json.success} dataKeys=${Object.keys(json.data ?? {}).join(",")} rawHtmlType=${typeof json.data?.rawHtml} htmlLen=${html.length} blocked=${blocked} snippet=${JSON.stringify(html.slice(0, 220))}`,
+    );
+    return { html, blocked };
   } catch {
     return { html: "", blocked: true };
   }
