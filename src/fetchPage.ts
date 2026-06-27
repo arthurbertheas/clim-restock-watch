@@ -40,7 +40,7 @@ export async function firecrawlFetch(url: string, apiKey: string): Promise<Fetch
     const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ url, formats: ["rawHtml"] }),
+      body: JSON.stringify({ url, formats: ["rawHtml"], proxy: "auto" }),
     });
     if (!res.ok) {
       console.error(`[FCDBG] http not ok status=${res.status} body=${JSON.stringify((await res.text()).slice(0, 200))}`);
