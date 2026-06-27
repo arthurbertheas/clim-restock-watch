@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { rmSync, existsSync } from "node:fs";
+import { rmSync, existsSync, writeFileSync } from "node:fs";
 import { loadState, saveState, getUrlState, isDue, firecrawlDue, decideAlert } from "../src/state";
 import type { UrlState } from "../src/types";
 
@@ -20,9 +20,24 @@ describe("state persistence", () => {
   it("saveState then loadState round-trips", () => {
     const p = join(tmpdir(), `crw-rt-${Math.floor(NOW.getTime())}.json`);
     const s = { urls: { u: urlState() }, firecrawl: { month: "2026-06", count: 3 } };
-    saveState(p, s);
-    expect(loadState(p)).toEqual(s);
-    rmSync(p);
+    try {
+      saveState(p, s);
+      expect(loadState(p)).toEqual(s);
+    } finally {
+      rmSync(p);
+    }
+  });
+  it("loadState returns empty default when the file is corrupt JSON", () => {
+    const p = join(tmpdir(), `crw-corrupt-${Math.floor(NOW.getTime())}.json`);
+    writeFileSync(p, "{ this is not valid json", "utf8");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      expect(loadState(p)).toEqual({ urls: {}, firecrawl: { month: "", count: 0 } });
+      expect(warn).toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+      rmSync(p);
+    }
   });
   it("getUrlState returns a default for unknown url", () => {
     const s = { urls: {}, firecrawl: { month: "2026-06", count: 0 } };

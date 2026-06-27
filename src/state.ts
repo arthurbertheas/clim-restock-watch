@@ -5,11 +5,16 @@ export function loadState(path: string): State {
   if (!existsSync(path)) {
     return { urls: {}, firecrawl: { month: "", count: 0 } };
   }
-  const parsed = JSON.parse(readFileSync(path, "utf8")) as Partial<State>;
-  return {
-    urls: parsed.urls ?? {},
-    firecrawl: parsed.firecrawl ?? { month: "", count: 0 },
-  };
+  try {
+    const parsed = JSON.parse(readFileSync(path, "utf8")) as Partial<State>;
+    return {
+      urls: parsed.urls ?? {},
+      firecrawl: parsed.firecrawl ?? { month: "", count: 0 },
+    };
+  } catch {
+    console.warn(`WARN: ${path} illisible/corrompu, reinitialisation de l'etat.`);
+    return { urls: {}, firecrawl: { month: "", count: 0 } };
+  }
 }
 
 export function saveState(path: string, state: State): void {
