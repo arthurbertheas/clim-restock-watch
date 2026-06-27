@@ -18,7 +18,7 @@ async function main(): Promise<void> {
     return;
   }
   const state = loadState(STATE_PATH);
-  const apiKey = process.env.FIRECRAWL_API_KEY ?? null;
+  const apiKey = process.env.FIRECRAWL_API_KEY || null;
 
   const deps: RunDeps = {
     now: new Date(),

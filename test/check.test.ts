@@ -97,6 +97,16 @@ describe("runCheck", () => {
     expect(firecrawl).not.toHaveBeenCalled();
   });
 
+  it("no firecrawl (and no spend) when apiKey is an empty string", async () => {
+    const wl: WatchEntry[] = [{ nom: "Clim", url: "u1", method: "auto" }];
+    const state = blankState();
+    const http = vi.fn(async () => ({ html: "", blocked: true }));
+    const firecrawl = vi.fn(async () => ({ html: PAGE_IN, blocked: false }));
+    await runCheck(wl, state, deps({ http, firecrawl, firecrawlApiKey: "" }));
+    expect(firecrawl).not.toHaveBeenCalled();
+    expect(state.firecrawl.count).toBe(0);
+  });
+
   it("logs a projection warning when worst-case Firecrawl usage exceeds 1000/month", async () => {
     const wl: WatchEntry[] = [{ nom: "Clim", url: "u1", method: "auto", firecrawlIntervalMin: 30 }];
     const state = blankState();

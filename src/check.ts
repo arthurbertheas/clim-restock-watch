@@ -38,7 +38,7 @@ export async function runCheck(
     if (!isDue(s, intervalMin, now)) continue;
 
     const canUseFirecrawl = (): boolean =>
-      deps.firecrawlApiKey != null && canSpend(state, now) && firecrawlDue(s, fcIntervalMin, now);
+      Boolean(deps.firecrawlApiKey) && canSpend(state, now) && firecrawlDue(s, fcIntervalMin, now);
 
     let result: FetchResult = { html: "", blocked: true };
     let usedFirecrawl = false;
