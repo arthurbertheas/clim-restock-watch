@@ -40,19 +40,12 @@ export async function firecrawlFetch(url: string, apiKey: string): Promise<Fetch
     const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ url, formats: ["rawHtml"], proxy: "stealth", waitFor: 3000 }),
+      body: JSON.stringify({ url, formats: ["rawHtml"] }),
     });
-    if (!res.ok) {
-      console.error(`[FCDBG] http not ok status=${res.status} body=${JSON.stringify((await res.text()).slice(0, 300))}`);
-      return { html: "", blocked: true };
-    }
-    const json = (await res.json()) as { success?: boolean; data?: { rawHtml?: string; metadata?: Record<string, unknown> } };
+    if (!res.ok) return { html: "", blocked: true };
+    const json = (await res.json()) as { success?: boolean; data?: { rawHtml?: string } };
     const html = json.data?.rawHtml ?? "";
-    const blocked = classifyResponse(200, html);
-    console.error(
-      `[FCDBG] success=${json.success} htmlLen=${html.length} blocked=${blocked} meta=${JSON.stringify(json.data?.metadata ?? {}).slice(0, 300)} snippet=${JSON.stringify(html.slice(0, 180))}`,
-    );
-    return { html, blocked };
+    return { html, blocked: classifyResponse(200, html) };
   } catch {
     return { html: "", blocked: true };
   }
